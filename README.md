@@ -17,4 +17,4 @@ A short description of your capstone project.
 
 ## License
 
-See [LICENSE](LICENSE).
+See [LICENSE](LICENSE) for the project's license terms.
