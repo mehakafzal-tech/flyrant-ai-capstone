@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Manage your account and workspace settings.">
+    <title>Settings</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="settings.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <section class="settings-card" aria-labelledby="page-title">
+        <p class="eyebrow">Account</p>
+        <h1 id="page-title">Settings</h1>
+        <p class="intro">Update your profile and workspace details.</p>
+
+        <form id="settings-form" novalidate>
+          <div class="field">
+            <label for="full-name">Full name</label>
+            <input id="full-name" name="fullName" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="full-name-error">
+            <p class="error" id="full-name-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error">
+            <p class="error" id="email-error"></p>
+          </div>
+
+          <div class="field">
+            <label for="workspace-name">Workspace name</label>
+            <input id="workspace-name" name="workspaceName" type="text" autocomplete="organization" required minlength="2" maxlength="80" aria-describedby="workspace-name-error">
+            <p class="error" id="workspace-name-error"></p>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit">Save settings</button>
+            <p id="form-status" class="status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
