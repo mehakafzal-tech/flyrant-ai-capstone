@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f5">
+  <title>Settings — Fieldnotes</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #242720;
+      --muted: #777a70;
+      --line: #e9e9e4;
+      --paper: #fff;
+      --canvas: #f7f7f5;
+      --green: #456653;
+      --green-dark: #344e3e;
+      --green-soft: #edf3ee;
+      --amber: #e5ad52;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app-shell { min-height: 100vh; }
+    .topbar { height: 68px; background: var(--paper); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 5.2%; }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-size: 17px; font-weight: 650; letter-spacing: -.5px; }
+    .brand-mark { display: grid; place-items: center; width: 31px; height: 31px; background: var(--green); color: white; border-radius: 9px; }
+    .brand-mark svg { width: 18px; height: 18px; }
+    .top-right { display: flex; align-items: center; gap: 21px; }
+    .help-link { color: var(--muted); text-decoration: none; font-size: 13px; }
+    .help-link:hover { color: var(--green); }
+    .avatar { width: 33px; height: 33px; border-radius: 50%; display: grid; place-items: center; color: #4b563b; background: #e7ebdf; font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+    .layout { max-width: 1180px; margin: 0 auto; padding: 48px 30px 80px; display: grid; grid-template-columns: 218px minmax(0, 1fr); gap: 64px; }
+    aside { padding-top: 8px; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 36px; text-decoration: none; color: var(--muted); font-size: 12px; font-weight: 550; }
+    .back-link:hover { color: var(--green); }
+    .side-label { color: #9a9c94; text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 700; margin: 0 0 12px 12px; }
+    .nav-list { display: grid; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; width: 100%; height: 42px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: #676a61; font-size: 13px; text-align: left; transition: background .16s, color .16s; }
+    .nav-item svg { width: 17px; height: 17px; color: #8b8e84; }
+    .nav-item:hover { background: #efefeb; color: var(--ink); }
+    .nav-item.active { background: var(--green-soft); color: var(--green-dark); font-weight: 650; }
+    .nav-item.active svg { color: var(--green); }
+    .sidebar-note { border-top: 1px solid var(--line); margin: 34px 10px 0; padding-top: 19px; color: #999b93; font-size: 11px; line-height: 1.6; }
+    .content { max-width: 760px; }
+    .eyebrow { color: var(--green); text-transform: uppercase; letter-spacing: .14em; font-size: 10px; font-weight: 750; }
+    h1 { margin: 8px 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(34px, 4vw, 43px); line-height: 1.12; letter-spacing: -1.3px; font-weight: 500; }
+    .intro { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .settings-form { margin-top: 32px; }
+    .section-card { background: var(--paper); border: 1px solid #ededea; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(33, 38, 31, .025); }
+    .card-heading { padding: 21px 24px 17px; border-bottom: 1px solid #f0f0ed; }
+    .card-heading h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: -.1px; }
+    .card-heading p { margin: 5px 0 0; color: #898b83; font-size: 11px; }
+    .card-body { padding: 5px 24px; }
+    .field-row { display: grid; grid-template-columns: minmax(145px, .9fr) minmax(220px, 1.1fr); gap: 28px; align-items: center; min-height: 70px; border-bottom: 1px solid #f1f1ee; }
+    .field-row:last-child { border-bottom: 0; }
+    .field-copy label, .field-copy .field-title { display: block; font-size: 12px; font-weight: 620; }
+    .field-copy small { display: block; color: #92948c; font-size: 10px; margin-top: 4px; line-height: 1.45; }
+    .text-input, select { width: 100%; height: 37px; border: 1px solid #e7e8e2; border-radius: 7px; background: #fff; padding: 0 11px; outline: none; color: #34372f; font-size: 12px; transition: border-color .15s, box-shadow .15s; }
+    .text-input:focus, select:focus { border-color: #75927d; box-shadow: 0 0 0 3px rgba(69, 102, 83, .1); }
+    .input-wrap { position: relative; }
+    .input-wrap .text-input { padding-right: 36px; }
+    .verified { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--green); width: 15px; height: 15px; }
+    .select-wrap { position: relative; }
+    .select-wrap:after { content: ""; position: absolute; top: 14px; right: 13px; width: 7px; height: 7px; border-right: 1.5px solid #777a70; border-bottom: 1.5px solid #777a70; transform: rotate(45deg); pointer-events: none; }
+    select { appearance: none; padding-right: 30px; cursor: pointer; }
+    .segmented { display: flex; width: max-content; max-width: 100%; padding: 3px; background: #f4f4f1; border-radius: 8px; gap: 2px; }
+    .segment { height: 29px; min-width: 65px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: #73766d; font-size: 11px; }
+    .segment[aria-pressed="true"] { background: white; color: var(--green-dark); font-weight: 650; box-shadow: 0 1px 3px rgba(25, 29, 23, .11); }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 61px; border-bottom: 1px solid #f1f1ee; }
+    .toggle-row:last-child { border-bottom: 0; }
+    .toggle-copy strong { display: block; font-size: 12px; font-weight: 620; }
+    .toggle-copy small { display: block; margin-top: 4px; color: #92948c; font-size: 10px; }
+    .switch { flex: 0 0 auto; position: relative; width: 36px; height: 21px; padding: 0; border: 0; border-radius: 20px; background: #d9dbd5; transition: background .2s; }
+    .switch:after { content: ""; position: absolute; width: 15px; height: 15px; left: 3px; top: 3px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px #0002; transition: transform .2s; }
+    .switch[aria-checked="true"] { background: var(--green); }
+    .switch[aria-checked="true"]:after { transform: translateX(15px); }
+    .form-footer { display: flex; justify-content: space-between; align-items: center; padding: 7px 2px 0; }
+    .save-hint { color: #93958c; font-size: 10px; display: flex; align-items: center; gap: 7px; }
+    .save-hint:before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #a8aba1; }
+    .save-hint.saved:before { background: #6c9477; }
+    .actions { display: flex; align-items: center; gap: 16px; }
+    .reset-button { border: 0; background: none; color: #777a70; font-size: 11px; }
+    .reset-button:hover { color: var(--ink); }
+    .save-button { height: 38px; padding: 0 17px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 7px; background: var(--green); color: #fff; font-size: 11px; font-weight: 650; box-shadow: 0 2px 4px #344e3e20; transition: background .15s, transform .15s; }
+    .save-button:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .save-button svg { width: 14px; height: 14px; }
+    .toast { position: fixed; right: 25px; bottom: 24px; padding: 11px 15px; background: #2f4435; color: white; border-radius: 8px; font-size: 12px; box-shadow: 0 8px 24px #1d2c2140; opacity: 0; transform: translateY(8px); pointer-events: none; transition: all .2s; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 760px) {
+      .topbar { height: 60px; padding: 0 20px; }
+      .layout { display: block; padding: 30px 20px 55px; }
+      aside { padding: 0; margin-bottom: 28px; }
+      .back-link, .side-label, .sidebar-note { display: none; }
+      .nav-list { display: flex; overflow-x: auto; padding: 0 0 8px; margin: 0 -20px; padding-left: 20px; padding-right: 20px; scrollbar-width: none; }
+      .nav-list::-webkit-scrollbar { display: none; }
+      .nav-item { width: auto; flex: 0 0 auto; padding: 0 12px; }
+      .content { max-width: none; }
+      .settings-form { margin-top: 25px; }
+    }
+    @media (max-width: 520px) {
+      .layout { padding: 24px 15px 40px; }
+      .nav-list { margin-left: -15px; margin-right: -15px; padding-left: 15px; padding-right: 15px; }
+      .nav-item { gap: 8px; font-size: 11px; height: 38px; }
+      .nav-item svg { width: 15px; height: 15px; }
+      .help-link { display: none; }
+      .field-row { display: block; padding: 15px 0; }
+      .field-row > :last-child { margin-top: 10px; }
+      .card-heading { padding: 18px 17px 14px; }
+      .card-body { padding: 3px 17px; }
+      .form-footer { align-items: flex-start; gap: 12px; flex-direction: column; }
+      .actions { width: 100%; justify-content: flex-end; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *:before, *:after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Fieldnotes home">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 5.5h10A1.5 1.5 0 0 1 18.5 7v12H8a2 2 0 0 1-2-2V7a1.5 1.5 0 0 1 1-1.42V5.5Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 9h6m-6 3.5h6m-6 3.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        Fieldnotes
+      </a>
+      <div class="top-right"><a class="help-link" href="mailto:hello@fieldnotes.example">Need a hand?</a><div class="avatar" aria-label="Signed in as Alex Morgan">AM</div></div>
+    </header>
+    <div class="layout">
+      <aside aria-label="Settings navigation">
+        <a href="#" class="back-link"><span aria-hidden="true">←</span> Back to workspace</a>
+        <p class="side-label">Workspace</p>
+        <nav class="nav-list">
+          <button class="nav-item active" type="button" aria-current="page" data-section="General"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="m19.4 15 .1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 1 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3H3.7a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 1 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-.9 3Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>General</button>
+          <button class="nav-item" type="button" data-section="Profile"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M5 20c.6-3.2 3.1-5 7-5s6.4 1.8 7 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Profile</button>
+          <button class="nav-item" type="button" data-section="Notifications"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-2.5 7-2.5 9h17C20.5 16 18 16 18 9Zm-8 12h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Notifications</button>
+          <button class="nav-item" type="button" data-section="Appearance"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18h1a2.2 2.2 0 0 0 1.4-3.9 1.4 1.4 0 0 1 .9-2.5H17a4 4 0 0 0 4-4c0-4.2-4-7.6-9-7.6Z" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="11" r="1" fill="currentColor"/><circle cx="10" cy="7.5" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/></svg>Appearance</button>
+          <button class="nav-item" type="button" data-section="Privacy"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Privacy &amp; security</button>
+        </nav>
+        <div class="sidebar-note">Your workspace, your way.<br>Changes are saved to this device.</div>
+      </aside>
+      <main class="content">
+        <div class="eyebrow">Your workspace</div>
+        <h1 id="page-title">Settings</h1>
+        <p class="intro" id="page-intro">Make Fieldnotes feel a little more like yours.</p>
+        <form class="settings-form" id="settings-form">
+          <section class="section-card" data-panel="Profile" aria-labelledby="account-heading">
+            <div class="card-heading"><h2 id="account-heading">Account details</h2><p>How your name and workspace appear to others.</p></div>
+            <div class="card-body">
+              <div class="field-row"><div class="field-copy"><label for="full-name">Full name</label><small>Your name as teammates see it</small></div><input class="text-input" id="full-name" name="fullName" autocomplete="name" value="Alex Morgan" maxlength="80"></div>
+              <div class="field-row"><div class="field-copy"><label for="email">Email address</label><small>Used for sign-in and updates</small></div><div class="input-wrap"><input class="text-input" id="email" name="email" type="email" autocomplete="email" value="alex@fieldnotes.studio" maxlength="160"><svg class="verified" viewBox="0 0 20 20" fill="none" aria-label="Verified"><path d="m5 10 3.2 3.2L15.5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+              <div class="field-row"><div class="field-copy"><label for="workspace">Workspace name</label><small>The name at the top of your space</small></div><input class="text-input" id="workspace" name="workspace" value="Fieldnotes Studio" maxlength="80"></div>
+            </div>
+          </section>
+          <section class="section-card" data-panel="Appearance" aria-labelledby="preferences-heading">
+            <div class="card-heading"><h2 id="preferences-heading">Preferences</h2><p>Set your defaults for a more comfortable day.</p></div>
+            <div class="card-body">
+              <div class="field-row"><div class="field-copy"><label for="language">Language</label><small>Used for menus and dates</small></div><div class="select-wrap"><select id="language" name="language"><option value="en">English (US)</option><option value="en-gb">English (UK)</option><option value="ur">اردو</option><option value="fr">Français</option><option value="es">Español</option></select></div></div>
+              <div class="field-row"><div class="field-copy"><span class="field-title">Appearance</span><small>Choose how Fieldnotes looks</small></div><div class="segmented" role="group" aria-label="Appearance"><button class="segment" type="button" data-choice="light" aria-pressed="true">Light</button><button class="segment" type="button" data-choice="dark" aria-pressed="false">Dark</button><button class="segment" type="button" data-choice="system" aria-pressed="false">System</button></div></div>
+              <div class="field-row"><div class="field-copy"><label for="week-start">Week starts on</label><small>Used in your calendar</small></div><div class="select-wrap"><select id="week-start" name="weekStart"><option value="monday">Monday</option><option value="sunday">Sunday</option><option value="saturday">Saturday</option></select></div></div>
+            </div>
+          </section>
+          <section class="section-card" data-panel="Notifications" aria-labelledby="notifications-heading">
+            <div class="card-heading"><h2 id="notifications-heading">Notifications</h2><p>A little signal, never too much noise.</p></div>
+            <div class="card-body">
+              <div class="toggle-row"><div class="toggle-copy"><strong>Email updates</strong><small>Occasional news and product notes</small></div><button class="switch" type="button" role="switch" aria-checked="true" aria-label="Email updates" data-toggle="emailUpdates"></button></div>
+              <div class="toggle-row"><div class="toggle-copy"><strong>Weekly digest</strong><small>A Monday recap of your workspace</small></div><button class="switch" type="button" role="switch" aria-checked="false" aria-label="Weekly digest" data-toggle="weeklyDigest"></button></div>
+              <div class="toggle-row"><div class="toggle-copy"><strong>Tips &amp; recommendations</strong><small>Helpful ideas tailored to your workflow</small></div><button class="switch" type="button" role="switch" aria-checked="true" aria-label="Tips and recommendations" data-toggle="tips"></button></div>
+            </div>
+          </section>
+          <section class="section-card" data-panel="Privacy" aria-labelledby="privacy-heading">
+            <div class="card-heading"><h2 id="privacy-heading">Privacy &amp; security</h2><p>Decide how Fieldnotes works with your data.</p></div>
+            <div class="card-body">
+              <div class="toggle-row"><div class="toggle-copy"><strong>Share anonymous usage data</strong><small>Help us make Fieldnotes better for everyone</small></div><button class="switch" type="button" role="switch" aria-checked="false" aria-label="Share anonymous usage data" data-toggle="analytics"></button></div>
+              <div class="toggle-row"><div class="toggle-copy"><strong>Show my online status</strong><small>Let workspace members see when you’re active</small></div><button class="switch" type="button" role="switch" aria-checked="true" aria-label="Show my online status" data-toggle="onlineStatus"></button></div>
+            </div>
+          </section>
+          <div class="form-footer"><div class="save-hint saved" id="save-hint" aria-live="polite">All changes saved</div><div class="actions"><button class="reset-button" type="reset">Discard changes</button><button class="save-button" type="submit"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 3.5h10l2.5 2.5v10.5H3.5V4A.5.5 0 0 1 4 3.5Z" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 3.5v4h6v-4M6 16.5v-5h8v5" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Save changes</button></div></div>
+        </form>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite">Your settings have been saved.</div>
+  </div>
+  <script>
+    (() => {
+      const form = document.querySelector('#settings-form');
+      const hint = document.querySelector('#save-hint');
+      const toast = document.querySelector('#toast');
+      const key = 'fieldnotes-settings-v1';
+      const defaults = { fullName: 'Alex Morgan', email: 'alex@fieldnotes.studio', workspace: 'Fieldnotes Studio', language: 'en', weekStart: 'monday', appearance: 'light', emailUpdates: true, weeklyDigest: false, tips: true, analytics: false, onlineStatus: true };
+      let saved = { ...defaults };
+      let toastTimer;
+      try { saved = { ...defaults, ...JSON.parse(localStorage.getItem(key) || '{}') }; } catch { /* Keep defaults when stored preferences are unavailable. */ }
+
+      function readForm() {
+        const value = Object.fromEntries(new FormData(form).entries());
+        value.appearance = document.querySelector('.segment[aria-pressed="true"]')?.dataset.choice || 'light';
+        document.querySelectorAll('[data-toggle]').forEach(button => { value[button.dataset.toggle] = button.getAttribute('aria-checked') === 'true'; });
+        return value;
+      }
+      function apply(values) {
+        for (const field of form.querySelectorAll('[name]')) if (values[field.name] !== undefined) field.value = values[field.name];
+        document.querySelectorAll('.segment').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.choice === (values.appearance || 'light'))));
+        document.querySelectorAll('[data-toggle]').forEach(button => button.setAttribute('aria-checked', String(values[button.dataset.toggle] ?? defaults[button.dataset.toggle])));
+        hint.textContent = 'All changes saved';
+        hint.classList.add('saved');
+      }
+      function changed() {
+        hint.textContent = 'You have unsaved changes';
+        hint.classList.remove('saved');
+      }
+      apply(saved);
+      form.addEventListener('input', changed);
+      form.addEventListener('change', changed);
+      document.querySelectorAll('.segment').forEach(button => button.addEventListener('click', () => {
+        document.querySelectorAll('.segment').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        changed();
+      }));
+      document.querySelectorAll('[data-toggle]').forEach(button => button.addEventListener('click', () => {
+        button.setAttribute('aria-checked', String(button.getAttribute('aria-checked') !== 'true'));
+        changed();
+      }));
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const next = readForm();
+        if (!form.reportValidity()) return;
+        try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* The current session can still use these preferences. */ }
+        saved = next;
+        hint.textContent = 'All changes saved';
+        hint.classList.add('saved');
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+      });
+      form.addEventListener('reset', event => {
+        event.preventDefault();
+        apply(saved);
+      });
+      const descriptions = {
+        General: 'Make Fieldnotes feel a little more like yours.',
+        Profile: 'Keep your personal details up to date.',
+        Notifications: 'Choose which notes make it to your inbox.',
+        Appearance: 'Settle into a look that feels right.',
+        Privacy: 'You’re in control of your account and data.'
+      };
+      document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(nav => { nav.classList.remove('active'); nav.removeAttribute('aria-current'); });
+        item.classList.add('active');
+        item.setAttribute('aria-current', 'page');
+        document.querySelector('#page-intro').textContent = descriptions[item.dataset.section];
+        const panel = item.dataset.section === 'General' ? document.querySelector('#page-title') : document.querySelector(`[data-panel="${item.dataset.section}"]`);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }));
+    })();
+  </script>
+</body>
+</html>
